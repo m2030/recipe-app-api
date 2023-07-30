@@ -1,10 +1,15 @@
 """
-Serializers for the user API View.
-from django.contrib.auth import (
-    get_user_model,
-    authenticate,
-)
+Serializers for recipe APIs
 """
-from django.utils.translation import gettext as _ # noqa
+from rest_framework import serializers
 
-from rest_framework import serializers # noqa
+from core.models import Recipe
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    """Serializer for recipes."""
+
+    class Meta:
+        model = Recipe
+        fields = ['id', 'title', 'time_minutes', 'price', 'link']
+        read_only_fields = ['id']
