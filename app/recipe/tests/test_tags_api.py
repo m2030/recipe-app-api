@@ -49,12 +49,12 @@ class PrivateTagsAPITests(TestCase):
 
     def test_retrieve_tags(self):
         """Test retrieving a list of tags."""
-        Tag.objects.create(user=self.user, name="vegan")
+        Tag.objects.create(user=self.user, name="Vegan")
         Tag.objects.create(user=self.user, name="Dessert")
 
         res = self.client.get(TAGS_URL)
 
-        tags = Tag.objects.all.order_by('-name')
+        tags = Tag.objects.all().order_by('-name')
 
         serializer = TagSerializer(tags, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -84,3 +84,15 @@ class PrivateTagsAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         tag.refresh_from_db()
         self.assertEqual(tag.name, payload['name'])
+
+    def test_delet_tag(self):
+        """test deleteing tag."""
+
+        tag = Tag.objects.create(user=self.user, name='Breakfast')
+
+        url = detail_url(tag.id)
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        tags = Tag.objects.filter(user=self.user)
+        self.assertFalse(tags.exists())
